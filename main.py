@@ -16,8 +16,9 @@ class Product(AbstractProduct):
     def __add__(self, other):
         if isinstance(other, Product):
             total_quantity = self.quantity + other.quantity
-            total_price = (self.quantity * self.get_price() + other.quantity * other.get_price()) / total_quantity
-            return Product(f"{self.name} + {other.name}", total_quantity, total_price)
+            total_cost = self.quantity * self.get_price() + other.quantity * other.get_price()
+            average_price = total_cost / total_quantity if total_quantity > 0 else 0
+            return Product(f"{self.name} + {other.name}", total_quantity, average_price)
         else:
             raise TypeError("Можно складывать только объекты Product")
 
@@ -52,6 +53,10 @@ class Book(Product):
         super().__init__(name, quantity, price)
         self.author = author
 
+    def get_description(self):
+        return f"Книга: {self.name}, Автор: {self.author}"
+
+print("=== Тестирование Task 1 ===")
 book1 = Book("Война и мир", 5, 500, "Лев Толстой")
 book2 = Book("Преступление и наказание", 3, 450, "Фёдор Достоевский")
 
@@ -63,5 +68,30 @@ try:
 except ValueError as e:
     print(e)  # ValueError: Цена не может быть меньше нуля!
 
+print("\n=== Тестирование Task 2 ===")
 book = Book("Война и мир", 5, 500, "Лев Толстой")
 print(book.get_description())  # "Книга: Война и мир, Автор: Лев Толстой"
+
+print("\n=== Тестирование Task 3 ===")
+print(f"Текущая цена: {book.get_price()}")
+book.set_price(600)
+print(f"Новая цена после set_price(600): {book.get_price()}")
+try:
+    book.set_price(-50)
+except ValueError as e:
+    print(e)  # ValueError: Цена не может быть меньше нуля!
+print(f"Цена после попытки установить отрицательное значение: {book.get_price()}")
+
+print("\n=== Дополнительное тестирование ===")
+try:
+    invalid_product = Product("Ошибка", 1, -200)
+except ValueError as e:
+    print(f"Создание продукта с отрицательной ценой: {e}")
+
+product1 = Product("Товар 1", 2, 100)
+product2 = Product("Товар 2", 1, 200)
+print(f"product1 < product2: {product1 < product2}")
+print(f"product1 > product2: {product1 > product2}")
+
+result = product1 + product2
+print(f"Сложение товаров: {result}")
